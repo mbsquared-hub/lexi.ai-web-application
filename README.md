@@ -10,8 +10,8 @@ Meet Lexi: a web-based AI chatbot that transforms your study experience. Built w
 
 
 # Technology Stack
-AI Platform: Microsoft Foundry (agent: gpt-4o)
-Architecture: Cloud-native design for scalability and reliability
-Front-End: Angular
+- AI Platform: Microsoft Foundry (agent: gpt-4o)
+- Architecture: Cloud-native design for scalability and reliability
+- Front-End: Angular
 
 
