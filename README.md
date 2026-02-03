@@ -8,6 +8,8 @@ Meet Lexi: a web-based AI chatbot that transforms your study experience. Built w
 - Knowledge Assessment: Test your understanding with interactive Q&A sessions
 - Study Planning: Create and maintain effective study schedules and milestones
 
+# Branch Overview 
+This branch is dedicated to the front-end of the Lexi web application, built with the Angular framework using HTML, SCSS, and TypeScript. All assets, including images and font links, are included in this branch.
 
 # Technology Stack
 - AI Platform: Microsoft Foundry (agent: gpt-4o)
