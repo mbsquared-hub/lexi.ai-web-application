@@ -1,6 +1,9 @@
 # Lexi
 Meet Lexi: a web-based AI chatbot that transforms your study experience. Built with Angular and powered by Azure OpenAI, it offers personalized learning paths, handpicked resources, and interactive support to help you ace certifications and achieve your educational goals.
 
+# Branch Overview
+This branch is dedicated to the back-end of the Lexi web application, built with Azure resources and Foundry using GPT-4o as the model. Current development efforts are focused on optimizing model usage and refining the prompt engineering logic within the Foundry environment
+
 # Use Cases
 - Certification Preparation: Get structured guidance for IT certifications (Azure, AWS, CompTIA, etc.), professional certifications, and industry-specific credentials
 - Academic Study: Support for coursework, exam preparation, and concept comprehension
