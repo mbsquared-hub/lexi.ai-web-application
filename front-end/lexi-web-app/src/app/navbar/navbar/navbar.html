@@ -1,0 +1,25 @@
+<header class="header">
+    <div class="logo">Lexi</div>
+    <div class="profile-container">
+        <img src="assets/mich_icon.jpg" alt="Profile" class="developer-michelle" (click)="toggleDropdown()">
+        <div class="dropdown" [class.active]="isDropdownOpen">
+            <div class="dropdown-section">
+                <div class="section-title">
+                    <span class="material-symbols-outlined section-icon">frame_person</span>Developer
+                </div>
+                <div class="developer-name">mbsquared-hub</div>
+            </div>
+            <div class="dropdown-section">
+                <div class="section-title">
+                    <span class="material-symbols-outlined section-icon">developer_board</span>Resources
+                </div>
+                <div class="resources-grid">
+                    <div class="resource-item">Angular</div>
+                    <div class="resource-item">Azure</div>
+                    <div class="resource-item second-row">Azure DevOps</div>
+                    <div class="resource-item second-row">Azure OpenAI</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

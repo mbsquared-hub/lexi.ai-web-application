@@ -1,0 +1,144 @@
+<div class="chat-container">
+  
+  <div class="chat-content" *ngIf="messages.length === 0">
+
+    <!-- Main Heading -->
+    <div class="centered-content">
+      <div class="lexi-icon">
+        <img src="assets/logo-dashboard.svg" alt="Lexi Logo" class="logo-welcome">
+      </div>
+      <h1 class="main-heading">What would you like to learn?</h1>
+
+    </div>
+
+    <!-- Suggestion Cards -->
+    <div class="suggestions">
+      <p class="suggestions-label">Suggestions on what to ask Lexi</p>
+      <div class="suggestion-cards">
+        <div class="suggestion-card" (click)="selectSuggestion('What can I ask you to do?')" role="button" tabindex="0">
+          <p>What can I ask you to do?</p>
+        </div>
+        <div class="suggestion-card" (click)="selectSuggestion('What are the best practice resources for Azure certifications?')" role="button" tabindex="0">
+          <p>What are the best practice resources for Azure certifications?</p>
+        </div>
+        <div class="suggestion-card" (click)="selectSuggestion('Create 5 practice questions for Azure AD concepts')" role="button" tabindex="0">
+          <p>Create 5 practice questions for Azure AD concepts</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Messages Area -->
+  <div class="messages-container" *ngIf="messages.length > 0">
+    <div class="messages-list">
+      <div *ngFor="let message of messages" [class]="'message-wrapper ' + message.sender">
+        
+        <!-- Lexi's Message -->
+        <div *ngIf="message.sender === 'lexi'" class="message lexi-message">
+          <div class="message-avatar">
+            <img src="assets/logo-dashboard.svg" alt="Lexi">
+          </div>
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-sender">LEXI</span>
+            </div>
+            <div class="message-text" [innerHTML]="formatMessage(message.text)"></div>
+          </div>
+        </div>
+
+        <!-- User's Message -->
+        <div *ngIf="message.sender === 'user'" class="message user-message">
+          <div class="message-content">
+            <div class="message-header">
+              <span class="message-sender">ME</span>
+            </div>
+            
+            <!-- Show images if present -->
+            <div *ngIf="message.images && message.images.length > 0" class="message-images">
+              <div class="message-images-grid" [class.single-image]="message.images.length === 1">
+                <div *ngFor="let image of message.images" class="message-image-item">
+                  <img [src]="image" alt="Uploaded screenshot">
+                </div>
+              </div>
+            </div>
+            
+            <!-- Message text -->
+            <div class="message-text">{{ message.text }}</div>
+          </div>
+          <div class="message-avatar">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div *ngIf="isTyping" class="message-wrapper lexi">
+        <div class="message lexi-message">
+          <div class="message-avatar">
+            <img src="assets/logo-dashboard.svg" alt="Lexi">
+          </div>
+          <div class="message-content">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regenerate Response Button -->
+      <div class="regenerate-container">
+        <button class="regenerate-button" (click)="regenerateResponse()" [disabled]="isTyping" type="button">
+          <span class="material-symbols-outlined">refresh</span>
+          <span class="regenerate-label">Regenerate response</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area with Integrated Image Preview -->
+  <div class="input-area">
+    <div class="input-container" [class.has-images]="hasImages">
+      <div class="images-preview-integrated" *ngIf="showImagePreview && stagedImages.length">
+        <div class="images-preview-header">
+          <!-- <span class="images-count">{{ stagedImages.length }} image{{ stagedImages.length > 1 ? 's' : '' }} (max {{ MAX_IMAGES }})</span> -->
+          <button class="clear-all-btn" (click)="cancelAllImages()" type="button">Clear all</button>
+        </div>
+        
+        <div class="images-preview-grid">
+          <div *ngFor="let image of stagedImages; let i = index" class="image-preview-item">
+            <img [src]="image" alt="Preview {{ i + 1 }}">
+            <button class="remove-image-btn" (click)="removeImage(i)" title="Remove image" type="button">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input row -->
+      <div class="input-row">
+        <!-- File upload button (hidden input) -->
+        <label class="upload-button" title="Upload image(s)" [class.disabled]="isUploadDisabled">
+          <span class="material-symbols-outlined">add_photo_alternate</span>
+          <input type="file" accept="image/*" multiple (change)="onFileSelected($event)" [disabled]="isUploadDisabled" style="display: none;">
+        </label>
+
+        <!-- Text input -->
+        <input type="text" [placeholder]="inputPlaceholder" class="chat-input" [(ngModel)]="userInput" (keypress)="handleKeyPress($event)" [disabled]="isTyping" autocomplete="off">
+
+        <!-- Mic button -->
+        <button class="mic-button" [disabled]="isTyping" type="button">
+          <span class="material-symbols-outlined">mic</span>
+        </button>
+
+        <!-- Send button -->
+        <button class="send-button" (click)="sendMessage()" [disabled]="isTyping" type="button">
+          <span class="material-symbols-outlined">arrow_upward</span>
+        </button>
+      </div>
+    </div>
+
+    <p class="copyright">Copyright © MB2 | All Rights Reserved</p>
+  </div>
+</div>
