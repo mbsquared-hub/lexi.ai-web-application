@@ -1,0 +1,412 @@
+//
+.chat-sidebar {
+  position: relative;
+  width: 320px;
+  height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  border-right:1px solid hsl(0, 0%, 90%);
+
+  flex-shrink: 0;
+  &.collapsed {
+    width: 60px;
+    .sidebar-content {
+      display: none;
+    }
+  }
+}
+
+// Collapse Toggle Button
+.collapse-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color:  hsl(0, 0%, 90%);
+  transition: color 0.2s;
+  &:hover {
+    color: #333;
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  padding-top: 3.5rem; 
+  overflow: hidden;
+}
+
+// Search Bar
+.search-container {
+  position: relative;
+  margin-bottom: 1rem;
+}
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  background-color: #333;
+  border: none;
+  border-radius: 1.5rem;
+  font-size: 13px;
+  color: #ffffff;
+  transition: all 0.2s;
+  &::placeholder {
+    color: white;
+  }
+  &:focus {
+    outline: none;
+    background-color: #333;
+  }
+}
+
+// Action Buttons
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #999;
+  font-size: 13px;
+  font-weight: 300;
+  &:hover {
+    background-color: #F5F5F5;
+    color: #333;
+    svg {
+      color: #333
+    };
+  }
+  svg {
+    width: 20px;
+    height: 20px;
+    color: #BBBBBB;
+    flex-shrink: 0;
+  }
+  span {
+    text-align: left;
+  }
+}
+
+// Divider
+.divider {
+  height: 1px;
+  background-color:hsl(0, 0%, 90%);
+  margin: 0.5rem 0 1rem 0;
+
+}
+
+// Recent Section
+.recent-section {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; 
+  margin-top: 10px;
+}
+.section-title {
+  font-size: 13px;
+  color: #999;
+  margin: 0 0 0.75rem 0;
+  padding: 0 0.5rem;
+  font-weight: 300;
+}
+
+// Chat List
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 -0.5rem;
+  padding: 0 0.5rem;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+
+    &:hover {
+      background: #9ca3af;
+    }
+  }
+}
+
+// Chat Item
+.chat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0.25rem;
+  position: relative;
+
+  &:hover {
+    background-color: #F5F5F5;
+    .delete-btn {
+      opacity: 1;
+      color: #333;
+    }
+    span{
+      color: #333;
+    }
+  }
+  &.active {
+    background-color: #333;
+    color: white;
+
+    .chat-title {
+      color: white;
+    }
+    .delete-btn {
+      color: white;
+    }
+  }
+}
+.chat-title {
+  font-size: 13px;
+  font-weight: 300;
+  color: #999;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  transition: color 0.2s;
+}
+
+// Delete Button
+.delete-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    color: currentColor;
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+
+  p {
+    margin: 0;
+  }
+}
+
+// User Profile
+.user-profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-top: 1px solid hsl(0, 0%, 90%);
+  margin-top: auto; 
+  position: relative;
+  margin-bottom: -20px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid #e5e7eb;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 0.125rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 300;
+  margin: 0;
+}
+
+.menu-container {
+  position: relative;
+}
+
+.menu-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e5e7eb;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #333;
+  }
+  
+  &:active,
+  &.active {
+    color: #333;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+// Dropdown Menu
+.dropdown-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 0.5rem;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #333;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  min-width: 160px;
+  z-index: 50;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  transition: background-color 0.2s;
+  text-align: left;
+
+  &:hover {
+    background-color: #333;
+    color: white;
+    svg {
+      color: white;
+    }
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+    color: #333;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+// Collapsed Content
+.collapsed-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 0.5rem 1rem;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .chat-sidebar {
+    width: 100%;
+    max-width: 320px;
+
+    &.collapsed {
+      width: 60px;
+    }
+  }
+}
