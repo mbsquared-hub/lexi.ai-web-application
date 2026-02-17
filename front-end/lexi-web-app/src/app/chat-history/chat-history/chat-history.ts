@@ -23,7 +23,7 @@ export class ChatHistory {
 
   searchQuery: string = '';
   selectedChatId: number | null = null;
-  isCollapsed: boolean = false;
+  isCollapsed: boolean = true;
   isDropdownOpen: boolean = false;
   
   recentChats: ChatMessage[] = [
