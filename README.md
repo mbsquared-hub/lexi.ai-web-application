@@ -1,8 +1,9 @@
 # Branch Overview
 
-Meet Lexi: a web-based AI chatbot that transforms your study experience. Built with Angular and powered by Azure OpenAI, it offers personalized learning paths, handpicked resources, and interactive support to help you ace certifications and achieve your educational goals.
-
 This branch is dedicated to the front-end of the Lexi web application, built with the Angular framework using HTML, SCSS, and TypeScript. All assets, including images and font links, are included in this branch.
+
+You can also check out Lexi’s case study, which includes my Figma-based UI design.
+Behance Profile:
 
 # Use Cases
 
