@@ -1,0 +1,65 @@
+<div class="sidebar-container">
+    <!-- Logo Sidebar -->
+    <div class="logo">
+        <img src="assets/logo claude.png" alt="Logo" class="logo-picture" *ngIf="!themeService.isDarkMode()">
+        <img src="assets/white-logo.png" alt="Logo" class="logo-picture" *ngIf="themeService.isDarkMode()">
+        <span class="material-symbols-outlined toggle" (click)="toggleSidebar()">dock_to_left</span>
+    </div>
+    <!-- Search Container -->
+    <div class="search-container">
+        <div class="search-input">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" placeholder="Search conversations" class="input-search"> 
+        </div>
+    </div>
+    <div class="action-buttons-container">
+        <!-- New chat -->
+        <div class="new-chat-container">
+            <button class="new-chat-button action-buttons">
+               <i class="fa-solid fa-comment-medical"></i>
+                <span>New Chat</span>
+            </button>
+        </div>
+        <!-- Chat history -->
+        <div class="chat-history-container">
+            <button class="chat-history-button action-buttons">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Chat History</span>
+            </button>
+        </div>
+    </div>
+    <!-- recent-history -->
+    <div class="recents-chats-container"> 
+        <span class="recent-title">Recent Chats</span>
+        <div class="chats-container">
+            @for (chat of chats; track chat.id)
+            {
+                <div class="chat-item">
+                    <span class="chat-title">{{ chat.title }}</span>
+                    <button class="delete-chat-button" (click)="openDeleteModal(chat.id)">
+                        <i class="fa-solid fa-delete-left delete-btn"></i>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="user-profile-container" [class.open]="dropdownOpen">
+        <div class="profile-info">
+            <div class="avatar">
+                <span class="avatar">{{ getInitials(username) }}</span>
+            </div>
+            <div class="user-details"> 
+                <span class="username">{{ username }}</span>
+                <span class="userrole">{{ userrole }}</span>
+            </div>
+        </div>
+        <div class="profile-dropdown" (click)="toggleDropdown()">
+            <i class="fa-solid fa-chevron-down" [class.rotated]="dropdownOpen"></i>
+            <div class="dropdown-container" *ngIf="dropdownOpen">
+                <button class="dropdown-item" (click)="logout()">
+                    <i class="fa-solid fa-right-from-bracket"></i>Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

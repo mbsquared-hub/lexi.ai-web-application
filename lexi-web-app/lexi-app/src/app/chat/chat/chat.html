@@ -1,0 +1,144 @@
+<div class="chat-container">
+  <!-- Image Viewer Modal -->
+  @if (viewerImage) {
+    <div class="image-viewer-overlay" (click)="closeViewer()">
+      <div class="image-viewer-container" (click)="$event.stopPropagation()">
+        <button class="viewer-close" (click)="closeViewer()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img [src]="viewerImage" alt="Full view" class="viewer-image">
+      </div>
+    </div>
+  }
+
+  <!-- Welcome Screen -->
+  @if (isWelcome) {
+    <div class="centered-content">
+      <div class="lexi-icon">
+        <!-- <img src="assets/logo-dashboard.svg" alt="Lexi" class="logo-picture"> -->
+        <img src="assets/logo claude.png" alt="Logo" class="logo-picture" *ngIf="!themeService.isDarkMode()">
+        <img src="assets/white-logo.png" alt="Logo" class="logo-picture" *ngIf="themeService.isDarkMode()">
+      </div>
+      <h1 class="welcome-message">What would you like to learn?</h1>
+    </div>
+
+    <div class="suggestions-containers">
+      <span class="suggestion-title">Suggestions on what to ask Lexi</span>
+      <div class="suggestions-cards-container">
+        <div class="card" (click)="selectSuggestion('What can I ask you to do?')">
+          <span class="suggestion-card-title">What can I ask you to do?</span>
+        </div>
+        <div class="card" (click)="selectSuggestion('What are the best practice resources for Azure certifications?')">
+          <span class="suggestion-card-title">What are the best practice resources for Azure certifications?</span>
+        </div>
+        <div class="card" (click)="selectSuggestion('Create 5 practice questions for Azure AD concepts')">
+          <span class="suggestion-card-title">Create 5 practice questions for Azure AD concepts</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Chat Messages -->
+  @if (!isWelcome) {
+    <div class="messages-container">
+      @for (message of messages; track message.id) {
+
+        <!-- User Message -->
+        @if (message.role === 'user') {
+          <div class="message-row user-row">
+            <div class="message-meta user-meta">
+              <span class="label">ME</span>
+              <div class="user-avatar">
+                <i class="fa-solid fa-user"></i>
+              </div>
+            </div>
+            @if (message.images && message.images.length > 0) {
+              <div class="message-images">
+                @for (img of message.images; track $index) {
+                  <img
+                    [src]="img"
+                    alt="Uploaded"
+                    class="message-image"
+                    (click)="openViewer(img)">
+                }
+              </div>
+            }
+            @if (message.content) {
+              <div class="message-bubble user-bubble">
+                {{ message.content }}
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Lexi Message -->
+        @if (message.role === 'lexi') {
+          <div class="message-row lexi-row">
+            <div class="message-meta lexi-meta">
+              <div class="lexi-avatar">
+                <img src="assets/logo-dashboard.svg" alt="Lexi">
+              </div>
+              <span class="label">LEXI</span>
+            </div>
+            <div class="message-bubble lexi-bubble">
+              {{ message.content }}
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Regenerate Button -->
+      @if (messages.length > 0) {
+        <div class="regenerate-container">
+          <button class="regenerate-btn" (click)="regenerate()">
+            <i class="fa-solid fa-rotate-right"></i>
+            Regenerate response
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Input Area -->
+  <div class="input-area-container">
+
+    @if (previewImages.length >= maxImages) {
+      <span class="image-limit-warning">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        Maximum {{ maxImages }} images allowed
+      </span>
+    }
+
+    <div class="input-area" [class.has-preview]="previewImages.length > 0">
+
+      @if (previewImages.length > 0) {
+        <div class="image-previews-container">
+          @for (img of previewImages; track $index) {
+            <div class="image-preview-wrapper">
+              <img
+                [src]="img"
+                alt="Preview"
+                class="image-preview"
+                (click)="openViewer(img)">
+              <button class="remove-preview" (click)="removePreview($index)">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          }
+          <span class="image-count">{{ previewImages.length }}/{{ maxImages }}</span>
+        </div>
+      }
+      <div class="input-row">
+        <input #fileInput type="file" accept="image/*" multiple style="display: none" (change)="onFileSelected($event)">
+        <button class="gallery-button" (click)="openFilePicker()" [class.disabled]="previewImages.length >= maxImages" [title]="previewImages.length >= maxImages ? 'Maximum ' + maxImages + ' images reached' : 'Upload image'">
+          <i class="fa-regular fa-image"></i>
+        </button>
+        <input type="text" placeholder="What can Lexi do for you?" class="input-field" [(ngModel)]="inputText" (keyup.enter)="sendMessage()" (paste)="onPaste($event)">
+        <!-- <button class="mic-button"><i class="fa-solid fa-microphone"></i></button> -->
+        <button class="send-button" (click)="sendMessage()"><i class="fa-solid fa-arrow-up-long"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <span class="copyright">Copyright © MB2 | All Rights Reserved</span>
+</div>

@@ -1,0 +1,91 @@
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+
+  // Mobile overlay backdrop
+  .sidebar-overlay {
+    display: none;
+  }
+
+  app-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+
+    &.sidebar-hidden {
+      width: 0;
+      opacity: 0;
+    }
+  }
+
+  .main-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+    }
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .layout-body {
+    flex-direction: column; // ← sidebar on top, content below
+
+    .sidebar-overlay {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+
+      &.active {
+        opacity: 1;
+        pointer-events: all; // ← clicking backdrop closes sidebar
+      }
+    }
+
+    app-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 260px !important;
+      z-index: 100;
+      background: white;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 1 !important;
+
+      &.sidebar-hidden {
+        transform: translateX(-100%); // ← slides out to the left
+        width: 260px !important;      // ← keep width, use transform instead
+      }
+
+      &:not(.sidebar-hidden) {
+        transform: translateX(0); // ← slides in
+      }
+    }
+
+    .main-area {
+      flex: 1;
+      width: 100%;
+    }
+  }
+}

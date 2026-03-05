@@ -1,0 +1,153 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--background-color);
+    transition: background 0.3s ease;
+    .logo-toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .logo {
+        font-family: "MuseoModerno", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 600;
+        font-style: normal;
+        font-size: 2em;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    .toggle {
+        color: var(--icon);
+        transition: color 0.3s ease;
+        &:hover {
+            cursor: pointer;
+            color: var(--icon-hover);
+        }
+    }
+    .right-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .toggle-mode-dark-light-container {
+            display: flex;
+            align-items: center;
+            font-size: 1em;
+            color: var(--icon);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: color 0.2s ease, background 0.2s ease;
+            &:hover {
+                color: var(--icon-hover);
+            }
+        }
+        .profile-container {
+            position: relative;
+            margin: 20px 15px;
+            .profile-picture {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                object-fit: cover;
+                transition: transform 0.2s ease;
+                &:hover {
+                    transform: scale(1.05);
+                    cursor: pointer;
+                }
+            }
+            .dropdown {
+                position: absolute;
+                top: calc(100% + 15px);
+                right: 0;
+                margin-right: -12px;
+                background: var(--background-color);
+                border-radius: 20px;
+                border: 1px solid var(--border-color);
+                box-shadow: var(--shadow);
+                padding: 30px;
+                min-width: 350px;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.3s ease;
+                z-index: 1000;
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: -11px;
+                    right: 24px;
+                    width: 0;
+                    height: 0;
+                    border-left: 11px solid transparent;
+                    border-right: 11px solid transparent;
+                    border-bottom: 11px solid var(--border-color);
+                }
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: -10px;
+                    right: 25px;
+                    width: 0;
+                    height: 0;
+                    border-left: 10px solid transparent;
+                    border-right: 10px solid transparent;
+                    border-bottom: 10px solid var(--background-color);
+                }
+                &.active {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0);
+                }
+                .dropdown-section {
+                    margin-bottom: 30px;
+                    &:last-child { margin-bottom: 0; }
+                    .section-title {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 12px;
+                        font-size: 13px;
+                        font-weight: 300;
+                        color: var(--text-color);
+                        margin-bottom: 15px;
+                        transition: color 0.3s ease;
+                        .title-name, .dropdown-title {
+                            margin-left: 10px;
+                        }
+                    }
+                    .developer-name {
+                        background-color: var(--surface-color);
+                        padding: 15px 20px;
+                        border-radius: 12px;
+                        width: 160px;
+                        font-size: 11px;
+                        color: var(--surface-color-text);
+                        text-align: center;
+                        transition: background 0.2s ease, color 0.2s ease;  
+                        cursor: pointer;                      
+                    }
+                    .resources-grid {
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 12px;
+                        .resource-item {
+                            padding: 15px 20px;
+                            border-radius: 12px;
+                            font-size: 11px;
+                            color: var(--text-color);
+                            text-align: center;
+                            width: 160px;
+                            background: var(--background-color);
+                            border: 1px solid var(--border-color);
+                            transition: background 0.2s ease, color 0.2s ease;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

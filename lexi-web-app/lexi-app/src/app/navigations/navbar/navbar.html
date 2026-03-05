@@ -1,0 +1,44 @@
+<header class="navbar">
+    <div class="logo-toggle-container">
+        @if (!sidebarService.isOpen()) {
+            <div class="sidebar">
+                <span class="material-symbols-outlined toggle" (click)="sidebarService.toggle()">dock_to_right</span>
+            </div>
+        }
+        <div class="logo" (click)="goHome()">Lexi</div>
+    </div>
+    <div class="right-container">
+        <div class="toggle-mode-dark-light-container" (click)="themeService.toggle()">
+            <i class="fa-solid fa-cloud-moon" *ngIf="themeService.isDarkMode()"></i>
+            <i class="fa-solid fa-cloud-sun" *ngIf="!themeService.isDarkMode()"></i>
+        </div>
+        <div class="profile-container"> 
+            <img src="assets/michyyy.png" alt="Profile Picture" class="profile-picture" (click)="toggleDropdown()">
+            <div class="dropdown" [class.active]="isDropdownOpen">
+                <div class="dropdown-section">
+                    <div class="section-title">
+                        <div class="developer-container">
+                            <i class="fa-brands fa-square-web-awesome"></i>
+                            <span class="title-name">Developer</span>
+                        </div>
+                        <span class="developer-name" (click)="goGithub()">mbsquared-hub</span>
+                    </div>
+                </div>
+                <div class="dropdown-section">
+                    <div class="section-title">
+                        <div class="resources-container">
+                            <i class="fa-solid fa-laptop-code"></i>
+                            <span class="dropdown-title">Resources</span>
+                        </div>
+                    </div>
+                    <div class="resources-grid">
+                        <span class="resource-item">Angular</span>
+                        <span class="resource-item">.NET (Azure Functions)</span>
+                        <span class="resource-item">Azure Resources</span>
+                        <span class="resource-item">Microsoft Foundry</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

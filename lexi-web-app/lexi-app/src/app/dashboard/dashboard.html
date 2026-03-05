@@ -1,0 +1,26 @@
+<div class="layout-wrapper">
+  <div class="layout-body">
+    <!-- Overlay for mobile -->
+    <div 
+      class="sidebar-overlay" 
+      [class.active]="sidebarService.isOpen()"
+      (click)="sidebarService.toggle()">
+    </div>
+    <app-sidebar [class.sidebar-hidden]="!sidebarService.isOpen()" (deleteModalOpen)="openDeleteModal($event)"></app-sidebar>
+    <div class="main-area">
+      <app-navbar></app-navbar>
+      <main class="main-content">
+        <app-chat></app-chat>
+      </main>
+    </div>
+  </div>
+   <!-- ✅ Modal lives here, outside sidebar constraints -->
+  @if (showDeleteModal) {
+    <app-modal
+      title="Delete Chat"
+      message="Are you sure you want to delete this chat? This action cannot be undone."
+      (confirmed)="confirmDelete()"
+      (cancelled)="cancelDelete()">
+    </app-modal>
+  }
+</div>
