@@ -43,23 +43,27 @@
             }
         </div>
     </div>
-    <div class="user-profile-container" [class.open]="dropdownOpen">
+    <div class="user-profile-container">
         <div class="profile-info">
             <div class="avatar">
                 <span class="avatar">{{ getInitials(username) }}</span>
             </div>
             <div class="user-details"> 
                 <span class="username">{{ username }}</span>
-                <span class="userrole">{{ userrole }}</span>
+                <span class="userrole">{{ userEmail }}</span>
             </div>
         </div>
-        <div class="profile-dropdown" (click)="toggleDropdown()">
-            <i class="fa-solid fa-chevron-down" [class.rotated]="dropdownOpen"></i>
-            <div class="dropdown-container" *ngIf="dropdownOpen">
-                <button class="dropdown-item" (click)="logout()">
-                    <i class="fa-solid fa-right-from-bracket"></i>Logout
-                </button>
-            </div>
-        </div>
+        <button class="logout-icon-btn" (click)="openLogoutModal()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
     </div>
+
+    <app-modal
+    *ngIf="logoutModalOpen"
+    title="Log Out"
+    message="Are you sure you want to log out?"
+    (confirmed)="confirmLogout()"
+    (cancelled)="logoutModalOpen = false">
+</app-modal>
+
 </div>

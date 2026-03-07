@@ -2,21 +2,23 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarService } from '../../services/sidebar.service';
 import { ThemeService } from '../../services/theme.service';
+import { AuthService } from '../../services/auth.service';
+import { Modal } from '../../modal/modal';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule],
+  imports: [CommonModule, Modal],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
   constructor(
     public sidebarService: SidebarService, 
-    public themeService: ThemeService) {}
-
-    username = 'Jane Doe';
+    public themeService: ThemeService,
+    public authService: AuthService
+  ){}
     userrole = 'User';
-    dropdownOpen = false;
+    logoutModalOpen = false;
 
   chats = [
     { id: 1, title: 'AZ-900 Exam Topics' },
@@ -38,20 +40,32 @@ export class Sidebar {
 
   toggleSidebar() {
     if (this.sidebarService.isOpen()) {
-      this.dropdownOpen = false;
     }
     this.sidebarService.toggle();
   }
+  get username(): string {
+    return this.authService.getUserName() || 'User';
+  }
+
+  get userEmail(): string {
+    return this.authService.getUserEmail() || '';
+  }
+
 
   getInitials(name: string): string {
+    if (!name) return '?';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   }
 
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
+  openLogoutModal() {
+    this.logoutModalOpen = true; 
   }
 
-  logout() {
-    console.log('User logged out');
+  confirmLogout() {
+    this.logoutModalOpen = false;
+    this.authService.logout();
   }
+
+  
+  
 }
