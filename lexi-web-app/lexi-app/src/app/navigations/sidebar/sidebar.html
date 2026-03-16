@@ -14,19 +14,16 @@
     </div>
     <div class="action-buttons-container">
         <!-- New chat -->
-        <div class="new-chat-container">
-            <button class="new-chat-button action-buttons">
-               <i class="fa-solid fa-comment-medical"></i>
-                <span>New Chat</span>
-            </button>
-        </div>
+        <button class="new-chat-button action-buttons" (click)="newChat.emit()">
+            <i class="fa-solid fa-comment-medical"></i>
+            <span>New Chat</span>
+        </button>
         <!-- Chat history -->
-        <div class="chat-history-container">
-            <button class="chat-history-button action-buttons">
-                <i class="fa-solid fa-clock-rotate-left"></i>
-                <span>Chat History</span>
-            </button>
-        </div>
+        <button class="chat-history-button action-buttons"   [class.active]="isChatHistoryOpen" (click)="openChatHistory.emit()">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Chat History</span>
+        </button>
+
     </div>
     <!-- recent-history -->
     <div class="recents-chats-container"> 
@@ -44,26 +41,17 @@
         </div>
     </div>
     <div class="user-profile-container">
-        <div class="profile-info">
-            <div class="avatar">
-                <span class="avatar">{{ getInitials(username) }}</span>
-            </div>
-            <div class="user-details"> 
-                <span class="username">{{ username }}</span>
-                <span class="userrole">{{ userEmail }}</span>
-            </div>
+    <div class="profile-info">
+        <div class="avatar">
+            <span class="avatar">{{ getInitials(username) }}</span>
         </div>
-        <button class="logout-icon-btn" (click)="openLogoutModal()">
-            <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
+        <div class="user-details"> 
+            <span class="username">{{ username }}</span>
+            <span class="userrole">{{ userEmail }}</span>
+        </div>
     </div>
-
-    <app-modal
-    *ngIf="logoutModalOpen"
-    title="Log Out"
-    message="Are you sure you want to log out?"
-    (confirmed)="confirmLogout()"
-    (cancelled)="logoutModalOpen = false">
-</app-modal>
-
+    <button class="logout-icon-btn" (click)="openLogoutModal()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+    </button>
+</div>
 </div>

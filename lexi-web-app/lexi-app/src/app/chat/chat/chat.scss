@@ -75,7 +75,7 @@
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem 0;
-
+    justify-content: flex-end; 
     .message-row {
       display: flex;
       flex-direction: column;
@@ -128,7 +128,7 @@
             object-fit: cover;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            cursor: zoom-in;
+            cursor:pointer;
             transition: opacity 0.2s ease;
             &:hover { opacity: 0.85; }
           }
@@ -152,7 +152,6 @@
         }
         .lexi-bubble {
           background-color: white;
-          // border: 1px solid #dfdfdf;
           border-radius: 4px 16px 16px 16px;
           padding: 20px 24px;
           font-size: 13px;
@@ -167,12 +166,12 @@
       display: flex;
       justify-content: center;
       padding: 0.5rem 0;
+      margin-bottom: 1rem; 
       .regenerate-btn {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         padding: 0.6rem 1.25rem;
-        // border: 1px solid #dfdfdf;
         border: none;
         border-radius: 20px;
         background: var(--input-background-color);
@@ -183,9 +182,7 @@
         &:hover {
           background-color: var(--regenerate-hover);
           color: white;
-          // border-color: #333;
         }
-
         i { font-size: 12px; }
       }
     }
@@ -197,6 +194,7 @@
     flex-direction: column;
     align-items: stretch;
     flex-shrink: 0;
+    margin-top: auto;   
     margin-bottom: 0.5rem;
     .image-limit-warning {
       font-size: 11px;
@@ -258,7 +256,9 @@
               color: white;
               font-size: 10px;
             }
-            &:hover { background: var(--regenerate-hover); }
+            &:hover { 
+              background: var(--regenerate-hover); 
+            }
           }
         }
         .image-count {
@@ -297,7 +297,9 @@
           font-weight: 300;
           color: var(--text-color);
           background: transparent;
-          &::placeholder { color: #bbb;}
+          &::placeholder { 
+            color: #bbb;
+          }
         }
         .mic-button {
           border: none;
@@ -310,7 +312,9 @@
           font-size: 16px;
           flex-shrink: 0;
           i { color: #dfdfdf; }
-          &:hover i { color: #333; }
+          &:hover i { 
+            color: #333; 
+          }
         }
         .send-button {
           width: 40px;
@@ -324,7 +328,9 @@
           justify-content: center;
           flex-shrink: 0;
           i { color: white; }
-          &:hover { background-color: #555; }
+          &:hover { 
+            background-color: #555; 
+          }
         }
       }
     }
@@ -335,7 +341,6 @@
     text-align: center;
     padding-bottom: 1rem;
   }
-
   // Tablet
   @media (max-width: 768px) {
     padding: 1rem;
@@ -401,7 +406,6 @@
         font-size: 1.25rem;
       }
     }
-
     .suggestions-containers {
       .suggestions-cards-container {
         grid-template-columns: 1fr;
@@ -420,7 +424,6 @@
     }
   }
 }
-
 // Image viewer modal
 .image-viewer-overlay {
   position: fixed;
@@ -431,6 +434,7 @@
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.2s ease;
+   padding: 1rem;
 
   .image-viewer-container {
     position: relative;
@@ -439,8 +443,8 @@
 
     .viewer-close {
       position: absolute;
-      top: -16px;
-      right: -16px;
+      top: -12px;
+      right: -12px;
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -452,7 +456,6 @@
       justify-content: center;
       z-index: 10;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-
       i { color: #333; font-size: 14px; }
       &:hover { 
         background: #333; 
@@ -462,20 +465,21 @@
       }
     }
     .viewer-image {
-      max-width: 90vw;
+      max-width: 100%; 
       max-height: 85vh;
       object-fit: contain;
       border-radius: 12px;
       display: block;
     }
     @media (max-width: 768px) {
+      max-width: 100%; 
       .viewer-close {
         top: -12px;
         right: -4px;
       }
       .viewer-image {
-        max-width: 95vw;
-        max-height: 80vh;
+        max-width: 100%;
+        max-height: 75vh;
         border-radius: 8px;
       }
     }

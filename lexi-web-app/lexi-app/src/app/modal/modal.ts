@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 export class Modal {
   @Input() title: string = 'Are you sure?';
   @Input() message: string = 'This action cannot be undone.';
-
+  @Input() confirmText: string = 'Confirm';  
   @Output() confirmed = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
 
@@ -21,5 +21,4 @@ export class Modal {
   onCancel() {
     this.cancelled.emit();
   }
-
 }

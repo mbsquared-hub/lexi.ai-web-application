@@ -1,1 +1,28 @@
-<p>toast-notification works!</p>
+<div class="toast-item" [ngClass]="bgClass" role="alert" aria-live="assertive" aria-atomic="true">
+  <!-- Icon -->
+  <div class="toast-icon" [ngClass]="iconBgClass">
+    <ng-container [ngSwitch]="toast.type">
+      <!-- Info -->
+      <svg *ngSwitchCase="'info'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="white"> <circle cx="12" cy="12" r="10"/> <path d="M12 8v1M12 12v5" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      <!-- Default / Star -->
+      <svg *ngSwitchCase="'default'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25 L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <!-- Warning -->
+      <svg *ngSwitchCase="'warning'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b"> <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13" stroke="white" stroke-width="2" stroke-linecap="round"/> <line x1="12" y1="17" x2="12.01" y2="17" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <!-- Error -->
+      <svg *ngSwitchCase="'error'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#ef4444"> <circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16v1" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      <!-- Success -->
+      <svg *ngSwitchCase="'success'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#22c55e"> <circle cx="12" cy="12" r="10"/> <path d="M8 12l3 3 5-6" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+    </ng-container>
+  </div>
+  <!-- Text -->
+  <div class="toast-content">
+    <p class="toast-title">{{ toast.title }}</p>
+    <p *ngIf="toast.description" class="toast-description">{{ toast.description }}</p>
+  </div>
+  <!-- Close Button -->
+  <button class="toast-close" (click)="onDismiss()" aria-label="Dismiss">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"> <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>

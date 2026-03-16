@@ -3,25 +3,21 @@
   @if (viewerImage) {
     <div class="image-viewer-overlay" (click)="closeViewer()">
       <div class="image-viewer-container" (click)="$event.stopPropagation()">
-        <button class="viewer-close" (click)="closeViewer()">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <button class="viewer-close" (click)="closeViewer()"><i class="fa-solid fa-xmark"></i></button>
         <img [src]="viewerImage" alt="Full view" class="viewer-image">
       </div>
     </div>
   }
-
   <!-- Welcome Screen -->
   @if (isWelcome) {
     <div class="centered-content">
       <div class="lexi-icon">
-        <!-- <img src="assets/logo-dashboard.svg" alt="Lexi" class="logo-picture"> -->
         <img src="assets/logo claude.png" alt="Logo" class="logo-picture" *ngIf="!themeService.isDarkMode()">
         <img src="assets/white-logo.png" alt="Logo" class="logo-picture" *ngIf="themeService.isDarkMode()">
       </div>
       <h1 class="welcome-message">What would you like to learn?</h1>
     </div>
-
+    <!-- Suggestions -->
     <div class="suggestions-containers">
       <span class="suggestion-title">Suggestions on what to ask Lexi</span>
       <div class="suggestions-cards-container">
@@ -37,12 +33,10 @@
       </div>
     </div>
   }
-
   <!-- Chat Messages -->
   @if (!isWelcome) {
     <div class="messages-container">
       @for (message of messages; track message.id) {
-
         <!-- User Message -->
         @if (message.role === 'user') {
           <div class="message-row user-row">
@@ -70,7 +64,6 @@
             }
           </div>
         }
-
         <!-- Lexi Message -->
         @if (message.role === 'lexi') {
           <div class="message-row lexi-row">
@@ -86,7 +79,6 @@
           </div>
         }
       }
-
       <!-- Regenerate Button -->
       @if (messages.length > 0) {
         <div class="regenerate-container">
@@ -98,7 +90,6 @@
       }
     </div>
   }
-
   <!-- Input Area -->
   <div class="input-area-container">
 
@@ -108,9 +99,7 @@
         Maximum {{ maxImages }} images allowed
       </span>
     }
-
     <div class="input-area" [class.has-preview]="previewImages.length > 0">
-
       @if (previewImages.length > 0) {
         <div class="image-previews-container">
           @for (img of previewImages; track $index) {
@@ -139,6 +128,5 @@
       </div>
     </div>
   </div>
-
   <span class="copyright">Copyright © MB2 | All Rights Reserved</span>
 </div>

@@ -1,15 +1,12 @@
 <div class="modal-overlay" (click)="onCancel()">
   <div class="modal-container" (click)="$event.stopPropagation()">
-    <!-- <div class="modal-icon">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-    </div> -->
     <div class="modal-content">
       <h3 class="modal-title">{{ title }}</h3>
       <p class="modal-message">{{ message }}</p>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" (click)="onCancel()">Cancel</button>
-      <button class="btn-confirm" (click)="onConfirm()">Delete</button>
+      <button class="btn-confirm" (click)="onConfirm()">{{ confirmText }}</button>
     </div>
   </div>
 </div>

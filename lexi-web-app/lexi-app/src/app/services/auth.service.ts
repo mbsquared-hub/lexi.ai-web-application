@@ -2,19 +2,14 @@ import { Injectable } from '@angular/core';
 import { MsalService } from '@azure/msal-angular';
 
 @Injectable({ providedIn: 'root' })
+
 export class AuthService {
   constructor(private msal: MsalService) {}
 
   login() {
     this.msal.loginRedirect({
-      scopes: ['user.read']
-    });
-  }
-
-  loginWithGoogle() {
-    this.msal.loginRedirect({
       scopes: ['user.read'],
-      extraQueryParameters: { domain_hint: 'google.com' }
+      prompt: 'select_account'
     });
   }
 
@@ -26,8 +21,8 @@ export class AuthService {
 
   getUser() {
     return this.msal.instance.getActiveAccount()
-    ?? this.msal.instance.getAllAccounts()?.[0]
-    ?? null;
+      ?? this.msal.instance.getAllAccounts()?.[0]
+      ?? null;
   }
 
   isLoggedIn(): boolean {

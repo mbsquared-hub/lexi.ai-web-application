@@ -1,14 +1,9 @@
-import { Component, ChangeDetectorRef, ElementRef, ViewChild, NgZone } from '@angular/core';
+import { Component, ChangeDetectorRef, ElementRef, ViewChild, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
-
-interface Message {
-  id: number;
-  role: 'user' | 'lexi';
-  content: string;
-  images?: string[];
-}
+import { ToastService } from '../../services/toast.service'; 
+import { Message } from '../../model/message.model';
 
 @Component({
   selector: 'app-chat',
@@ -23,6 +18,8 @@ export class Chat {
   previewImages: string[] = [];
   maxImages = 5;
   viewerImage: string | null = null;
+
+  private toastService = inject(ToastService); 
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -47,7 +44,7 @@ export class Chat {
     if (this.previewImages.length >= this.maxImages) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      this.ngZone.run(() => { // ← runs inside Angular's zone
+      this.ngZone.run(() => {
         this.previewImages.push(e.target?.result as string);
         this.cdr.detectChanges();
       });
@@ -105,6 +102,10 @@ export class Chat {
     this.inputText = '';
     this.previewImages = [];
     this.cdr.detectChanges();
+    this.toastService.warning(
+      'Lexi is not yet enabled',
+      'The AI service is not connected yet. Responses are placeholder only.'
+    );
 
     setTimeout(() => {
       this.messages.push({
@@ -120,6 +121,11 @@ export class Chat {
     const lastLexi = [...this.messages].reverse().find(m => m.role === 'lexi');
     if (lastLexi) {
       lastLexi.content = "Hi! Thanks for your message. I'm currently not connected to Azure OpenAI yet.";
+      this.toastService.warning(
+        'Lexi is not yet enabled',
+        'The AI service is not connected yet. Responses are placeholder only.'
+      );
+
       this.cdr.detectChanges();
     }
   }

@@ -15,7 +15,7 @@ export class Navbar {
   constructor(
     private router: Router, 
     public sidebarService: SidebarService,
-    public themeService: ThemeService  // add this
+    public themeService: ThemeService  
   ) {}
 
   goHome() { this.router.navigate(['/']); }
@@ -28,7 +28,4 @@ export class Navbar {
       this.isDropdownOpen = false;
     }
   }
-
-
-
 }

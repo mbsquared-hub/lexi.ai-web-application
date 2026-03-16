@@ -1,6 +1,5 @@
 // Default light mode variables
 :root {
-
   --background-color: white;
   --text-color: #333333;
   --background-text-color: white;
@@ -11,36 +10,21 @@
   --surface-color: #f5f5f5;
   --surface-color-text: #333;
   --border-right-color: #f1f1f1;
-
   --input-background-color: #333;
   --hover-background: #f5f5f5;  
   --action: #333;
   --sidebar-dropdown: #333;
-
   --suggestions-title: #aaa;
   --suggestions: #f5f5f5;
   --hover-suggestions: #333;
   --regenerate-hover: #252525;
   --send-icon: #333;
-
-
+  --backgroud-hover-chat: #dfdfdf;
   --modal-background:rgba(0, 0, 0, 0.4);
   --delete-text: white;
-
-
-  // // --bg-color: #ffffff;
-  // // --text-color: #333333;
-  // // --border-color: #dfdfdf;
-  // --sidebar-border: #f1f1f1;
-  // --background: #333;
-  // --hover:#333333;
-  // --text-white-bg:#333;
-  // --hover-dp: white;
 }
-
 // Dark mode overrides
 body.dark-mode {
-
   --background-color: #333;
   --text-color: white;
   --icon: white;
@@ -50,28 +34,17 @@ body.dark-mode {
   --surface-color: #504f4f;
   --surface-color-text: white;
   --border-right-color: #504f4f;
-
   --input-background-color: white;
   --background-text-color: #333;
   --action: white;
   --sidebar-dropdown: #dfdfdf;
-
   --suggestions-title: white;
   --suggestions: #767676;
   --hover-suggestions: white;
-
   --regenerate-hover: #504f4f;
   --send-icon: #767676;
-
   --modal:  rgba(0, 0, 0, 0.1);
-  // // --bg-color: #333;
-  // // --text-color: white;
-  // // --border-color: white;
-  // // --sidebar-border: #504f4f ;
-  // --hover: #dfdfdf;
-  //   --background: white;
-  //   --text-white-bg:#333;
-  //   --hover-dp: #333;
+  --backgroud-hover-chat: #333;
 }
 
 //GLOBAL STYLES FOR ALL THE COMPONENTS
@@ -87,4 +60,3 @@ html, body {
   padding: 0;
   box-sizing: border-box;
 }
-

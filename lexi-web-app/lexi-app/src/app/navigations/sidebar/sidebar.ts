@@ -3,22 +3,22 @@ import { CommonModule } from '@angular/common';
 import { SidebarService } from '../../services/sidebar.service';
 import { ThemeService } from '../../services/theme.service';
 import { AuthService } from '../../services/auth.service';
-import { Modal } from '../../modal/modal';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [CommonModule, Modal],
+  imports: [CommonModule,],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
+
 export class Sidebar {
   constructor(
     public sidebarService: SidebarService, 
     public themeService: ThemeService,
     public authService: AuthService
   ){}
-    userrole = 'User';
-    logoutModalOpen = false;
+
+  userrole = 'User';
 
   chats = [
     { id: 1, title: 'AZ-900 Exam Topics' },
@@ -27,6 +27,10 @@ export class Sidebar {
   ];
 
   @Output() deleteModalOpen = new EventEmitter<number>();
+  @Output() logoutModalOpen = new EventEmitter<void>(); 
+  @Output() openChatHistory = new EventEmitter<void>();  
+  @Output() newChat = new EventEmitter<void>();
+  @Input() isChatHistoryOpen = false;
 
   openDeleteModal(id: number) {
     this.deleteModalOpen.emit(id);
@@ -43,6 +47,7 @@ export class Sidebar {
     }
     this.sidebarService.toggle();
   }
+
   get username(): string {
     return this.authService.getUserName() || 'User';
   }
@@ -51,21 +56,12 @@ export class Sidebar {
     return this.authService.getUserEmail() || '';
   }
 
-
   getInitials(name: string): string {
     if (!name) return '?';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   }
-
+  
   openLogoutModal() {
-    this.logoutModalOpen = true; 
+    this.logoutModalOpen.emit();
   }
-
-  confirmLogout() {
-    this.logoutModalOpen = false;
-    this.authService.logout();
-  }
-
-  
-  
 }

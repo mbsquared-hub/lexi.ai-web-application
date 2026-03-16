@@ -9,7 +9,6 @@
     overflow: hidden;
     border-right:1px solid var(--border-right-color);
     background: var(--background-color);
-
     //logo container
     .logo {
         display: flex;
@@ -34,7 +33,6 @@
             }
         }
     }
-    
     //search bar
     .search-container 
     {
@@ -67,7 +65,6 @@
             }
         }
     }
-
     //action buttons
     .action-buttons-container {
         display: flex;
@@ -91,6 +88,10 @@
                 background-color: var(--surface-color);
                 // color: var(--surface-color-text);
                 width: 100%;
+            }
+            &.active {
+                background-color: var(--surface-color);
+                font-weight: 500;
             }
         }
     }
@@ -213,7 +214,6 @@
             transition: color 0.2s ease, background 0.2s ease;
             &:hover {
                 color: var(--icon-hover);
-                // background-color: var(--surface-color);
             }
         }
     }
