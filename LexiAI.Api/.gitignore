@@ -1,0 +1,19 @@
+# Build results
+bin/
+obj/
+
+# IDE files
+.idea/
+.vs/
+*.user
+
+# Secrets
+appsettings.Development.json
+
+# Mac
+.DS_Store
+
+# NuGet
+*.nupkg
+project.lock.json
+packages/
