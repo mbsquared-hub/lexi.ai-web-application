@@ -41,8 +41,8 @@ var app = builder.Build();
 // ─── Middleware Pipeline ──────────────────────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-app.UseHttpsRedirection();
 app.UseCors("FrontendPolicy");
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

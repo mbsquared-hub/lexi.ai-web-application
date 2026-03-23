@@ -54,6 +54,89 @@ public class AiResponseService : IAiResponseService
         return client;
     }
 
+    // ─── Build message content — text only or text + images ──────────────────
+    private static object BuildMessageContent(string message, List<string>? images)
+    {
+        // No images — send as plain string
+        if (images == null || images.Count == 0)
+            return string.IsNullOrWhiteSpace(message) ? "Please describe this." : message;
+
+        var contentParts = new List<object>();
+
+        // ← only add text block if there's actual text
+        if (!string.IsNullOrWhiteSpace(message))
+        {
+            contentParts.Add(new
+            {
+                type = "text",
+                text = message
+            });
+        }
+
+        foreach (var image in images)
+        {
+            contentParts.Add(new
+            {
+                type = "image_url",
+                image_url = new
+                {
+                    url = image,
+                    detail = "auto"
+                }
+            });
+        }
+
+        return contentParts;
+    }
+
+    // ─── Post message — tries with images, falls back to text-only ───────────
+    private async Task<HttpResponseMessage> PostMessageToThreadAsync(
+        HttpClient client,
+        string threadId,
+        string message,
+        List<string>? images)
+    {
+        if (images != null && images.Count > 0)
+        {
+            var payloadWithImages = JsonSerializer.Serialize(new
+            {
+                role = "user",
+                content = BuildMessageContent(message, images)
+            });
+
+            var responseWithImages = await client.PostAsync(
+                $"{BaseUrl}/openai/threads/{threadId}/messages?api-version={ApiVersion}",
+                new StringContent(payloadWithImages, Encoding.UTF8, "application/json"));
+
+            if (responseWithImages.IsSuccessStatusCode)
+            {
+                _logger.LogInformation("Message sent with {Count} image(s)", images.Count);
+                return responseWithImages;
+            }
+
+            var errorBody = await responseWithImages.Content.ReadAsStringAsync();
+            _logger.LogWarning(
+                "Image message failed ({Status}), retrying text-only. Error: {Error}",
+                responseWithImages.StatusCode, errorBody);
+
+            responseWithImages.Dispose();
+        }
+
+        // ─── Fallback — text only ─────────────────────────────────────────────
+        var textOnlyPayload = JsonSerializer.Serialize(new
+        {
+            role = "user",
+            content = string.IsNullOrWhiteSpace(message)
+                ? "Please describe this."
+                : message
+        });
+
+        _logger.LogInformation("Sending text-only message (image stripped)");
+        return await client.PostAsync(
+            $"{BaseUrl}/openai/threads/{threadId}/messages?api-version={ApiVersion}",
+            new StringContent(textOnlyPayload, Encoding.UTF8, "application/json"));
+    }
+
     public async Task<ChatResponse> SendMessageAsync(
         string userId, SendMessageRequest request)
     {
@@ -65,29 +148,31 @@ public class AiResponseService : IAiResponseService
                 $"Conversation {request.ConversationId} not found.");
 
         _logger.LogInformation(
-            "Sending message to thread {ThreadId}",
-            conversation.AgentThreadId);
+            "Sending message to thread {ThreadId} with {ImageCount} image(s)",
+            conversation.AgentThreadId,
+            request.Images?.Count ?? 0);
 
         using var client = await CreateAuthenticatedClientAsync();
         var threadId = conversation.AgentThreadId;
 
-        // Step 2: Add user message to the thread
-        var messagePayload = JsonSerializer.Serialize(new
-        {
-            role = "user",
-            content = request.Message
-        });
-
-        var messageResponse = await client.PostAsync(
-            $"{BaseUrl}/openai/threads/{threadId}/messages?api-version={ApiVersion}",
-            new StringContent(messagePayload, Encoding.UTF8, "application/json"));
+        // ─── Step 2: Add user message (with image fallback) ──────────────────
+        var messageResponse = await PostMessageToThreadAsync(
+            client, threadId, request.Message, request.Images);
 
         var messageBody = await messageResponse.Content.ReadAsStringAsync();
         _logger.LogInformation("Add message response {Status}: {Body}",
             messageResponse.StatusCode, messageBody);
-        messageResponse.EnsureSuccessStatusCode();
 
-        // Step 3: Create a run
+        if (!messageResponse.IsSuccessStatusCode)
+        {
+            _logger.LogError(
+                "Failed to add message even without images. Status: {Status}, Body: {Body}",
+                messageResponse.StatusCode, messageBody);
+            throw new InvalidOperationException(
+                $"Failed to add message to thread: {messageBody}");
+        }
+
+        // ─── Step 3: Create a run ─────────────────────────────────────────────
         var runPayload = JsonSerializer.Serialize(new
         {
             assistant_id = _aiOptions.AgentId
@@ -100,13 +185,20 @@ public class AiResponseService : IAiResponseService
         var runBody = await runResponse.Content.ReadAsStringAsync();
         _logger.LogInformation("Create run response {Status}: {Body}",
             runResponse.StatusCode, runBody);
-        runResponse.EnsureSuccessStatusCode();
+
+        if (!runResponse.IsSuccessStatusCode)
+        {
+            _logger.LogError("Failed to create run. Status: {Status}, Body: {Body}",
+                runResponse.StatusCode, runBody);
+            throw new InvalidOperationException(
+                $"Failed to create agent run: {runBody}");
+        }
 
         using var runDoc = JsonDocument.Parse(runBody);
         var runId = runDoc.RootElement.GetProperty("id").GetString()!;
         var runStatus = runDoc.RootElement.GetProperty("status").GetString()!;
 
-        // Step 4: Poll until complete
+        // ─── Step 4: Poll until complete ──────────────────────────────────────
         while (runStatus == "queued" || runStatus == "in_progress")
         {
             await Task.Delay(500);
@@ -127,7 +219,7 @@ public class AiResponseService : IAiResponseService
                 $"Agent run did not complete. Status: {runStatus}");
         }
 
-        // Step 5: Get messages
+        // ─── Step 5: Get messages ─────────────────────────────────────────────
         var messagesResponse = await client.GetAsync(
             $"{BaseUrl}/openai/threads/{threadId}/messages?api-version={ApiVersion}");
         var messagesBody = await messagesResponse.Content.ReadAsStringAsync();
@@ -155,7 +247,7 @@ public class AiResponseService : IAiResponseService
             }
         }
 
-        // Step 6: Save to Cosmos DB
+        // ─── Step 6: Save to Cosmos DB ────────────────────────────────────────
         var aiResponse = new AiResponse
         {
             ConversationId = request.ConversationId,
@@ -168,7 +260,7 @@ public class AiResponseService : IAiResponseService
 
         await SaveAiResponseAsync(aiResponse);
 
-        // Step 7: Update conversation preview
+        // ─── Step 7: Update conversation preview ──────────────────────────────
         await _conversationService.UpdateConversationAsync(
             request.ConversationId,
             userId,

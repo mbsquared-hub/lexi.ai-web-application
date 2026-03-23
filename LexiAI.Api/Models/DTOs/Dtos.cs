@@ -17,9 +17,11 @@ public record ConversationDto(
     string? LastMessagePreview,
     bool IsActive);
 
+// ← Updated: added Images field
 public record SendMessageRequest(
     string ConversationId,
-    string Message);
+    string Message,
+    List<string>? Images = null);
 
 public record ChatResponse(
     string ConversationId,
