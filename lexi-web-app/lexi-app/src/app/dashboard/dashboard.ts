@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Navbar } from '../navigations/navbar/navbar';
 import { SidebarService } from '../services/sidebar.service';
 import { Sidebar } from '../navigations/sidebar/sidebar';
@@ -8,6 +8,8 @@ import { Modal } from '../modal/modal';
 import { AuthService } from '../services/auth.service';
 import { ToastContainerComponent } from '../notifications/toast-container.component';
 import { ChatHistory } from '../chat-history/chat-history';
+import { ConversationService } from '../services/conversation.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,17 +18,24 @@ import { ChatHistory } from '../chat-history/chat-history';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements AfterViewInit {
+
   constructor(
     public sidebarService: SidebarService,
-    public authService: AuthService
+    public authService: AuthService,
+    private conversationService: ConversationService,
+    private toastService: ToastService,
+    private cdr: ChangeDetectorRef  // ← added
   ) {}
+
+  @ViewChild(Chat) chatComponent!: Chat;
+  @ViewChild(Sidebar) sidebarComponent!: Sidebar;
 
   showDeleteModal = false;
   showLogoutModal = false;
-  showChatHistory = false; 
+  showChatHistory = false;
   sidebarReady = false;
-  
-  chatToDelete: number | null = null;
+
+  conversationToDelete: string | null = null;
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -34,31 +43,82 @@ export class Dashboard implements AfterViewInit {
     }, 50);
   }
 
-  openDeleteModal(id: number) {
-    this.chatToDelete = id;
+  // ─── Conversation selection ───────────────────────────────────────────────
+  onConversationSelected(conversationId: string) {
+    this.showChatHistory = false;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.chatComponent?.loadConversation(conversationId);
+    }, 50);
+  }
+
+  // ─── New chat ─────────────────────────────────────────────────────────────
+  onNewChat() {
+    this.showChatHistory = false;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.chatComponent?.newChat();
+      this.sidebarComponent?.loadRecentConversations(true); // ← silent, no loading flash
+    }, 0);
+  }
+
+  // ─── Chat history ─────────────────────────────────────────────────────────
+  openChatHistory() {
+    this.showChatHistory = true;
+  }
+
+  closeChatHistory() {
+    this.showChatHistory = false;
+  }
+
+  // ─── Delete (from sidebar) ────────────────────────────────────────────────
+  openDeleteModal(id: string) {
+    this.conversationToDelete = id;
     this.showDeleteModal = true;
   }
+
+  confirmDelete() {
+    if (!this.conversationToDelete) {
+      this.showDeleteModal = false;
+      return;
+    }
+    this.conversationService.deleteConversation(this.conversationToDelete).subscribe({
+      next: () => {
+        this.sidebarComponent?.removeConversation(this.conversationToDelete!);
+        this.toastService.success('Deleted', 'Conversation has been deleted.');
+
+        if (this.chatComponent?.currentConversationId === this.conversationToDelete) {
+          this.chatComponent.newChat();
+        }
+
+        this.conversationToDelete = null;
+        this.showDeleteModal = false;
+      },
+      error: (err) => {
+        console.error('Delete failed', err);
+        this.toastService.error('Delete failed', 'Please try again.');
+        this.showDeleteModal = false;
+      }
+    });
+  }
+
+  cancelDelete() {
+    this.conversationToDelete = null;
+    this.showDeleteModal = false;
+  }
+
+  // ─── Logout ───────────────────────────────────────────────────────────────
   openLogoutModal() {
-  this.showLogoutModal = true;
-}
+    this.showLogoutModal = true;
+  }
 
   confirmLogout() {
     this.showLogoutModal = false;
     this.authService.logout();
   }
-  confirmDelete() {
-    this.showDeleteModal = false;
-  }
 
-  cancelDelete() {
-    this.showDeleteModal = false;
+  // ─── Refresh sidebar after message sent ──────────────────────────────────
+  onConversationUpdated() {
+    this.sidebarComponent?.loadRecentConversations(true); // ← silent, no loading flash
   }
-    openChatHistory() {
-    this.showChatHistory = true;   
-  }
-
-  closeChatHistory() {
-    this.showChatHistory = false; 
-  }
-
 }

@@ -1,28 +1,39 @@
 <div class="layout-wrapper">
   <div class="layout-body">
-    <div class="sidebar-overlay" [class.active]="sidebarService.isOpen()"(click)="sidebarService.toggle()"></div>
-    <app-sidebar 
+    <div class="sidebar-overlay"
+      [class.active]="sidebarService.isOpen()"
+      (click)="sidebarService.toggle()">
+    </div>
+
+    <app-sidebar
       [isChatHistoryOpen]="showChatHistory"
       [class.is-ready]="sidebarReady"
-      [class.sidebar-hidden]="!sidebarService.isOpen()" 
-      (deleteModalOpen)="openDeleteModal($event)" 
+      [class.sidebar-hidden]="!sidebarService.isOpen()"
+      (deleteModalOpen)="openDeleteModal($event)"
       (logoutModalOpen)="openLogoutModal()"
       (openChatHistory)="openChatHistory()"
-      (newChat)="closeChatHistory()">
+      (newChat)="onNewChat()"
+      (conversationSelected)="onConversationSelected($event)">
     </app-sidebar>
 
     <div class="main-area">
       <app-navbar></app-navbar>
       <main class="main-content">
         @if (showChatHistory) {
-          <app-chat-history (back)="closeChatHistory()" (newChat)="closeChatHistory()"></app-chat-history>
+          <app-chat-history
+            (back)="closeChatHistory()"
+            (newChat)="onNewChat()"
+            (conversationSelected)="onConversationSelected($event)">
+          </app-chat-history>
         } @else {
-          <app-chat></app-chat>
+          <app-chat (conversationUpdated)="onConversationUpdated()"></app-chat>
         }
       </main>
     </div>
   </div>
+
   <app-toast-container/>
+
   @if (showDeleteModal) {
     <app-modal
       title="Delete Chat"
@@ -32,6 +43,7 @@
       (cancelled)="cancelDelete()">
     </app-modal>
   }
+
   @if (showLogoutModal) {
     <app-modal
       title="Log Out"

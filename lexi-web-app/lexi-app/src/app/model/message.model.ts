@@ -1,6 +1,7 @@
 export interface Message {
-  id: number;
+  id: string;
   role: 'user' | 'lexi';
   content: string;
+  timestamp?: Date;
   images?: string[];
 }

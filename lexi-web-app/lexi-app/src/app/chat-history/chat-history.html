@@ -2,53 +2,140 @@
   <div class="uppper-container">
     <span>Chat History</span>
     <div class="new-chat-button">
-      <button (click)="newChat.emit()"><i class="fa-solid fa-plus"></i>New Chat</button>
+      <button (click)="newChat.emit()">
+        <i class="fa-solid fa-plus"></i>New Chat
+      </button>
     </div>
   </div>
-  <!-- Search Container -->
+
+  <!-- Search -->
   <div class="search-container">
     <div class="search-input">
       <i class="fa-solid fa-magnifying-glass search-icon"></i>
-      <input type="text" placeholder="Search conversations" class="input-search">
+      <input
+        type="text"
+        placeholder="Search conversations"
+        class="input-search"
+        [(ngModel)]="searchText">
     </div>
   </div>
-  <!-- Subtitle row — hidden when in select mode -->
+
+  <!-- Subtitle row -->
   <div class="subtitle-row" *ngIf="!selectMode">
     <span class="subtitle-text">Your conversations with Lexi</span>
     <button class="select-btn" (click)="enterSelectMode()">Select</button>
   </div>
-  <!-- Selection Bar — shown when in select mode -->
+
+  <!-- Selection Bar -->
   <div class="selection-bar" *ngIf="selectMode">
     <div class="selection-left">
-      <input type="checkbox" [checked]="allSelected" (change)="toggleSelectAll()" class="select-all-checkbox">
+      <input
+        type="checkbox"
+        [checked]="allSelected"
+        (change)="toggleSelectAll()"
+        class="select-all-checkbox">
       <span class="selected-count">{{ selectedCount }} selected</span>
-      <!-- for future enhancement -->
-      <!-- <button class="selection-action" [disabled]="selectedCount === 0" title="Archive"><i class="fa-regular fa-copy"></i></button> --> 
-      <button class="selection-action" [disabled]="selectedCount === 0" title="Delete"  (click)="deleteSelected()"><i class="fa-regular fa-trash-can"></i></button>
+      <button
+        class="selection-action"
+        [disabled]="selectedCount === 0"
+        title="Delete"
+        (click)="deleteSelected()">
+        <i class="fa-regular fa-trash-can"></i>
+      </button>
     </div>
-    <button class="selection-clear" (click)="exitSelectMode()"><i class="fa-solid fa-xmark"></i></button>
+    <button class="selection-clear" (click)="exitSelectMode()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
   </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <span>Loading conversations...</span>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!isLoading && filteredConversations.length === 0">
+    <span>{{ searchText ? 'No conversations match your search.' : 'No conversations yet. Start a new chat!' }}</span>
+  </div>
+
   <!-- Chat List -->
-  <div class="chat-list">
-    <div class="chat-item" *ngFor="let chat of chats" [class.selected]="chat.selected" [class.dropdown-open]="chat.showDropdown">
-      <input type="checkbox" class="chat-checkbox" [class.always-visible]="selectMode" [(ngModel)]="chat.selected" (change)="onCheckboxChange()">
+  <div class="chat-list" *ngIf="!isLoading">
+    <div
+      class="chat-item"
+      *ngFor="let conversation of filteredConversations"
+      [class.selected]="uiState[conversation.id]?.selected"
+      [class.dropdown-open]="uiState[conversation.id]?.showDropdown"
+      [class.is-renaming]="renamingId === conversation.id"
+      (click)="openConversation(conversation)">
+
+      <input
+        type="checkbox"
+        class="chat-checkbox"
+        [class.always-visible]="selectMode"
+        [checked]="uiState[conversation.id]?.selected"
+        (change)="uiState[conversation.id].selected = !uiState[conversation.id].selected; onCheckboxChange()"
+        (click)="$event.stopPropagation()">
+
       <div class="chat-inner">
         <div class="chat-info">
-          <span class="chat-title">{{ chat.title }}</span>
-          <span class="chat-date">{{ chat.lastMessage }}</span>
+
+          <!-- Rename mode -->
+          @if (renamingId === conversation.id) {
+            <div class="rename-wrapper" (click)="$event.stopPropagation()">
+              <input
+                class="rename-input"
+                type="text"
+                [(ngModel)]="renameValue"
+                (keydown)="onRenameKeyDown($event, conversation)"
+                (blur)="confirmRename(conversation)"
+                autofocus>
+              <div class="rename-actions">
+                <button
+                  class="rename-confirm"
+                  (mousedown)="$event.preventDefault()"
+                  (click)="confirmRename(conversation)"
+                  title="Save">
+                  <i class="fa-solid fa-check"></i>
+                </button>
+                <button
+                  class="rename-cancel"
+                  (mousedown)="$event.preventDefault(); isCancelling = true"
+                  (click)="cancelRename()"
+                  title="Cancel">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+          } @else {
+            <span class="chat-title">{{ conversation.title }}</span>
+            <span class="chat-date">{{ formatDate(conversation.updatedAt) }}</span>
+            <span class="chat-preview" *ngIf="conversation.lastMessagePreview">
+              {{ conversation.lastMessagePreview }}
+            </span>
+          }
         </div>
-        <!-- Dropdown -->
-        <div class="chat-options-wrapper" *ngIf="!selectMode">
-          <button class="chat-options" [class.active]="chat.showDropdown" (click)="toggleDropdown(chat, $event)"><i class="fa-solid fa-ellipsis"></i></button>
-          <div class="dropdown-menu" *ngIf="chat.showDropdown">
-            <button class="dropdown-item" (click)="onSelect(chat)"><i class="fa-solid fa-check"></i> Select</button>
-            <!-- for future enhancement -->
-            <!-- <div class="dropdown-divider"></div> -->
-            <!-- <button class="dropdown-item"><i class="fa-regular fa-star"></i> Star</button> -->
-            <!-- <button class="dropdown-item"><i class="fa-solid fa-pencil"></i> Rename</button> -->
-            <!-- <button class="dropdown-item"><i class="fa-solid fa-folder-plus"></i> Add to project</button> -->
+
+        <!-- Dropdown — hidden when renaming -->
+        <div
+          class="chat-options-wrapper"
+          *ngIf="!selectMode && renamingId !== conversation.id">
+          <button
+            class="chat-options"
+            [class.active]="uiState[conversation.id]?.showDropdown"
+            (click)="toggleDropdown(conversation, $event)">
+            <i class="fa-solid fa-ellipsis"></i>
+          </button>
+          <div class="dropdown-menu" *ngIf="uiState[conversation.id]?.showDropdown">
+            <button class="dropdown-item" (click)="onSelect(conversation, $event)">
+              <i class="fa-solid fa-check"></i> Select
+            </button>
+            <button class="dropdown-item" (click)="startRename(conversation, $event)">
+              <i class="fa-solid fa-pencil"></i> Rename
+            </button>
             <div class="dropdown-divider"></div>
-            <button class="dropdown-item delete" (click)="deleteChat(chat)" ><i class="fa-regular fa-trash-can"></i> Delete</button>
+            <button class="dropdown-item delete" (click)="deleteConversation(conversation, $event)">
+              <i class="fa-regular fa-trash-can"></i> Delete
+            </button>
           </div>
         </div>
       </div>
@@ -56,11 +143,11 @@
   </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+<!-- Delete Modal -->
 <app-modal
   *ngIf="showDeleteModal"
-  title="Delete Chat"
-  message="Are you sure you want to delete this chat? This action cannot be undone."
+  title="Delete Conversation"
+  message="Are you sure you want to delete this conversation? This action cannot be undone."
   confirmText="Delete"
   (confirmed)="onDeleteConfirmed()"
   (cancelled)="onDeleteCancelled()">

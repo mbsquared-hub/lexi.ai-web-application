@@ -1,57 +1,82 @@
 <div class="sidebar-container">
-    <!-- Logo Sidebar -->
-    <div class="logo">
-        <img src="assets/logo claude.png" alt="Logo" class="logo-picture" *ngIf="!themeService.isDarkMode()">
-        <img src="assets/white-logo.png" alt="Logo" class="logo-picture" *ngIf="themeService.isDarkMode()">
-        <span class="material-symbols-outlined toggle" (click)="toggleSidebar()">dock_to_left</span>
-    </div>
-    <!-- Search Container -->
-    <div class="search-container">
-        <div class="search-input">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" placeholder="Search conversations" class="input-search"> 
-        </div>
-    </div>
-    <div class="action-buttons-container">
-        <!-- New chat -->
-        <button class="new-chat-button action-buttons" (click)="newChat.emit()">
-            <i class="fa-solid fa-comment-medical"></i>
-            <span>New Chat</span>
-        </button>
-        <!-- Chat history -->
-        <button class="chat-history-button action-buttons"   [class.active]="isChatHistoryOpen" (click)="openChatHistory.emit()">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span>Chat History</span>
-        </button>
 
+  <!-- Logo -->
+  <div class="logo">
+    <img src="assets/logo claude.png" alt="Logo" class="logo-picture" *ngIf="!themeService.isDarkMode()">
+    <img src="assets/white-logo.png" alt="Logo" class="logo-picture" *ngIf="themeService.isDarkMode()">
+    <span class="material-symbols-outlined toggle" (click)="toggleSidebar()">dock_to_left</span>
+  </div>
+
+  <!-- Search -->
+  <div class="search-container">
+    <div class="search-input">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input
+        type="text"
+        placeholder="Search conversations"
+        class="input-search"
+        [(ngModel)]="searchText">
     </div>
-    <!-- recent-history -->
-    <div class="recents-chats-container"> 
-        <span class="recent-title">Recent Chats</span>
-        <div class="chats-container">
-            @for (chat of chats; track chat.id)
-            {
-                <div class="chat-item">
-                    <span class="chat-title">{{ chat.title }}</span>
-                    <button class="delete-chat-button" (click)="openDeleteModal(chat.id)">
-                        <i class="fa-solid fa-delete-left delete-btn"></i>
-                    </button>
-                </div>
-            }
-        </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons-container">
+    <button class="new-chat-button action-buttons" (click)="newChat.emit()">
+      <i class="fa-solid fa-comment-medical"></i>
+      <span>New Chat</span>
+    </button>
+    <button
+      class="chat-history-button action-buttons"
+      [class.active]="isChatHistoryOpen"
+      (click)="openChatHistory.emit()">
+      <i class="fa-solid fa-clock-rotate-left"></i>
+      <span>Chat History</span>
+    </button>
+  </div>
+
+  <!-- Recent Chats -->
+  <div class="recents-chats-container">
+    <span class="recent-title">Recent Chats</span>
+
+    <!-- Loading -->
+    <div class="recent-loading" *ngIf="isLoading">
+      <span>Loading...</span>
     </div>
-    <div class="user-profile-container">
+
+    <!-- Empty state -->
+    <div class="recent-empty" *ngIf="!isLoading && filteredConversations.length === 0">
+      <span>{{ searchText ? 'No matches found.' : 'No recent chats yet.' }}</span>
+    </div>
+
+    <div class="chats-container" *ngIf="!isLoading">
+      <div
+        class="chat-item"
+        *ngFor="let conversation of filteredConversations"
+        (click)="openConversation(conversation)">
+        <span class="chat-title">{{ conversation.title }}</span>
+        <button
+          class="delete-chat-button"
+          (click)="$event.stopPropagation(); openDeleteModal(conversation.id)">
+          <i class="fa-solid fa-delete-left delete-btn"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Profile -->
+  <div class="user-profile-container">
     <div class="profile-info">
-        <div class="avatar">
-            <span class="avatar">{{ getInitials(username) }}</span>
-        </div>
-        <div class="user-details"> 
-            <span class="username">{{ username }}</span>
-            <span class="userrole">{{ userEmail }}</span>
-        </div>
+      <div class="avatar">
+        <span class="avatar">{{ getInitials(username) }}</span>
+      </div>
+      <div class="user-details">
+        <span class="username">{{ username }}</span>
+        <span class="userrole">{{ userEmail }}</span>
+      </div>
     </div>
     <button class="logout-icon-btn" (click)="openLogoutModal()">
-        <i class="fa-solid fa-right-from-bracket"></i>
+      <i class="fa-solid fa-right-from-bracket"></i>
     </button>
-</div>
+  </div>
+
 </div>

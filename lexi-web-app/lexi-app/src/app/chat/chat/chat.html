@@ -8,6 +8,7 @@
       </div>
     </div>
   }
+
   <!-- Welcome Screen -->
   @if (isWelcome) {
     <div class="centered-content">
@@ -17,7 +18,6 @@
       </div>
       <h1 class="welcome-message">What would you like to learn?</h1>
     </div>
-    <!-- Suggestions -->
     <div class="suggestions-containers">
       <span class="suggestion-title">Suggestions on what to ask Lexi</span>
       <div class="suggestions-cards-container">
@@ -33,9 +33,21 @@
       </div>
     </div>
   }
+
   <!-- Chat Messages -->
   @if (!isWelcome) {
-    <div class="messages-container">
+    <div class="messages-container" #messagesContainer>
+
+      <!-- History loading indicator -->
+      @if (isLoadingHistory) {
+        <div class="history-loading">
+          <div class="history-loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <p>Loading conversation...</p>
+        </div>
+      }
+
       @for (message of messages; track message.id) {
         <!-- User Message -->
         @if (message.role === 'user') {
@@ -49,21 +61,16 @@
             @if (message.images && message.images.length > 0) {
               <div class="message-images">
                 @for (img of message.images; track $index) {
-                  <img
-                    [src]="img"
-                    alt="Uploaded"
-                    class="message-image"
-                    (click)="openViewer(img)">
+                  <img [src]="img" alt="Uploaded" class="message-image" (click)="openViewer(img)">
                 }
               </div>
             }
             @if (message.content) {
-              <div class="message-bubble user-bubble">
-                {{ message.content }}
-              </div>
+              <div class="message-bubble user-bubble">{{ message.content }}</div>
             }
           </div>
         }
+
         <!-- Lexi Message -->
         @if (message.role === 'lexi') {
           <div class="message-row lexi-row">
@@ -73,14 +80,28 @@
               </div>
               <span class="label">LEXI</span>
             </div>
-            <div class="message-bubble lexi-bubble">
-              {{ message.content }}
-            </div>
+            <div class="message-bubble lexi-bubble" markdown [data]="message.content"></div>
           </div>
         }
       }
-      <!-- Regenerate Button -->
-      @if (messages.length > 0) {
+
+      <!-- Typing Indicator — only when sending a message, never when loading history -->
+      @if (isLoading && !isLoadingHistory) {
+        <div class="message-row lexi-row">
+          <div class="message-meta lexi-meta">
+            <div class="lexi-avatar">
+              <img src="assets/logo-dashboard.svg" alt="Lexi">
+            </div>
+            <span class="label">LEXI</span>
+          </div>
+          <div class="message-bubble lexi-bubble typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      }
+
+      <!-- Regenerate Button — only when not loading anything -->
+      @if (messages.length > 0 && !isLoading && !isLoadingHistory) {
         <div class="regenerate-container">
           <button class="regenerate-btn" (click)="regenerate()">
             <i class="fa-solid fa-rotate-right"></i>
@@ -90,9 +111,9 @@
       }
     </div>
   }
+
   <!-- Input Area -->
   <div class="input-area-container">
-
     @if (previewImages.length >= maxImages) {
       <span class="image-limit-warning">
         <i class="fa-solid fa-circle-exclamation"></i>
@@ -104,11 +125,7 @@
         <div class="image-previews-container">
           @for (img of previewImages; track $index) {
             <div class="image-preview-wrapper">
-              <img
-                [src]="img"
-                alt="Preview"
-                class="image-preview"
-                (click)="openViewer(img)">
+              <img [src]="img" alt="Preview" class="image-preview" (click)="openViewer(img)">
               <button class="remove-preview" (click)="removePreview($index)">
                 <i class="fa-solid fa-xmark"></i>
               </button>
@@ -119,12 +136,32 @@
       }
       <div class="input-row">
         <input #fileInput type="file" accept="image/*" multiple style="display: none" (change)="onFileSelected($event)">
-        <button class="gallery-button" (click)="openFilePicker()" [class.disabled]="previewImages.length >= maxImages" [title]="previewImages.length >= maxImages ? 'Maximum ' + maxImages + ' images reached' : 'Upload image'">
+        <button
+          class="gallery-button"
+          (click)="openFilePicker()"
+          [class.disabled]="previewImages.length >= maxImages"
+          [title]="previewImages.length >= maxImages ? 'Maximum ' + maxImages + ' images reached' : 'Upload image'">
           <i class="fa-regular fa-image"></i>
         </button>
-        <input type="text" placeholder="What can Lexi do for you?" class="input-field" [(ngModel)]="inputText" (keyup.enter)="sendMessage()" (paste)="onPaste($event)">
-        <!-- <button class="mic-button"><i class="fa-solid fa-microphone"></i></button> -->
-        <button class="send-button" (click)="sendMessage()"><i class="fa-solid fa-arrow-up-long"></i></button>
+        <input
+          type="text"
+          placeholder="What can Lexi do for you?"
+          class="input-field"
+          [(ngModel)]="inputText"
+          (keyup.enter)="sendMessage()"
+          (paste)="onPaste($event)"
+          [disabled]="isLoading || isLoadingHistory">
+        <button
+          class="send-button"
+          (click)="sendMessage()"
+          [class.loading]="isLoading"
+          [disabled]="isLoading || isLoadingHistory">
+          @if (isLoading) {
+            <i class="fa-solid fa-stop"></i>
+          } @else {
+            <i class="fa-solid fa-arrow-up-long"></i>
+          }
+        </button>
       </div>
     </div>
   </div>
