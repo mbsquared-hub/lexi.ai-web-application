@@ -5,20 +5,20 @@ using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── Authentication (Azure AD) ────────────────────────────────────────────────
+// Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration);
 
-// ─── Cosmos DB ────────────────────────────────────────────────────────────────
+// Cosmos DB
 builder.Services.AddCosmosDb(builder.Configuration);
 
-// ─── Azure AI Agent ───────────────────────────────────────────────────────────
+// Azure AI Service
 builder.Services.AddAzureAi(builder.Configuration);
 
-// ─── App Services ─────────────────────────────────────────────────────────────
+// App Services
 builder.Services.AddApplicationServices();
 
-// ─── CORS ─────────────────────────────────────────────────────────────────────
+// CORS
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? [];
@@ -32,13 +32,13 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-// ─── Controllers ──────────────────────────────────────────────────────────────
+// Controllers
 builder.Services.AddControllers();
 
-// ─── Build ────────────────────────────────────────────────────────────────────
+// Build
 var app = builder.Build();
 
-// ─── Middleware Pipeline ──────────────────────────────────────────────────────
+// Middleware Pipeline
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseCors("FrontendPolicy");
